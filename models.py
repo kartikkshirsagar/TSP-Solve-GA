@@ -5,8 +5,10 @@ class City:
         self.__x = x
         self.__y = y
     
-    def printC(self):
-        print("{0} located at {1},{2}".format(self.name,self.getX(),self.getY()))
+    def __str__(self):
+        return "{0} located at {1},{2}".format(self.name,self.getX(),self.getY())
+    def __repr__(self):
+        return "{0}".format(self.name)
 
     def getX(self):
         return self.__x
