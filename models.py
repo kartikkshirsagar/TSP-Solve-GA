@@ -4,7 +4,12 @@ class City:
         self.name = name
         self.__x = x
         self.__y = y
-    
+    def __eq__(self,other):
+        if type(other) is not City:
+            return False
+        # print(self.__x ,other.getX())
+        return self.name == other.name and self.__y == other.getY()
+
     def __str__(self):
         return "{0} located at {1},{2}".format(self.name,self.getX(),self.getY())
     def __repr__(self):

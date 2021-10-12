@@ -4,15 +4,21 @@
 import random
 import copy
 
+INIT_POPULATION_SIZE = 20
+MUTATION_PROB = 0.7
+
 def select_parents(population,fitness):
     parents = []
+    fit = [1- w for w in fitness]
     for i in range(len(population)//2):
         parent_pair = random.choices(population,weights=fitness,k=2)
+        while(parent_pair[0] == parent_pair[1]):
+            parent_pair = random.choices(population,weights=fitness,k=2)
         parents.append(parent_pair)
     
     return parents
 
-def crossover(parents):
+def crossoverPairWise(parents):
     # trying to implement two point crossover with replacement (TPXwR)
     # research paper source - https://www.scitepress.org/papers/2015/55902/55902.pdf
     p1 = parents[0]
@@ -87,11 +93,7 @@ def crossover(parents):
                 break
     return [child1,child2]
 
-def fitness_function(population):
-    fitness_values = []
-    fitness_values_scaled = []
-
-    def fitness_function_calc(route):
+def fitness_function_calc(route):
         # given a route, calculate the cost incurred
         
         cost = 0
@@ -100,24 +102,62 @@ def fitness_function(population):
         cost+=route[-1].distanceFrom(route[0])
         return cost
 
+def fitness_function(population):
+    fitness_values = []
+    fitness_values_scaled = []
+
+
     for i in range(len(population)):
         fitness_value = fitness_function_calc(population[i])
-        fitness_values.append(fitness_value)
+        fitness_values.append(1 / fitness_value)
 
     # scale it between 0 to 1
-    weights = [1.0 / w for w in fitness_values]           # Invert all weights
-    sum_weights = sum(weights)
+    sum_weights = sum(fitness_values)
     # print(weights)
-    fitness_values_scaled = [w / sum_weights for w in weights]  # Normalize weights
-    return fitness_values_scaled
+    fitness_values_scaled = [(w / sum_weights) for w in fitness_values]  # Normalize weights
+    return fitness_values
     
     
 def generate_random_route(cities):
     return random.sample(cities,len(cities))
 
 
-def generate_random_population(size,city_list):
+def generate_random_population(size,city_list,src):
+    # generate population such that all individuals begin with src
     population = []
     for i in range(size):
-        population.append(generate_random_route(city_list))
+        route = generate_random_route(city_list)
+        route.remove(src) 
+        route.insert(0,src) # add the source city at the beginning
+        population.append(route)
+    # print(population)
     return population
+
+def generateChildPop(parentPop,fitnessValues):
+    childPop = []
+
+    for i in range(INIT_POPULATION_SIZE//2):
+        parents = select_parents(parentPop,fitnessValues)
+        children = crossoverPairWise(parents[i])
+        childrenMutated1 = mutate(copy.deepcopy(children[0]))
+        childrenMutated2 = mutate(copy.deepcopy(children[1]))
+        childPop.extend([childrenMutated1,childrenMutated2])
+    return childPop
+
+
+
+
+def mutate(population):
+    # simple TWORS mutation which swaps any two cities
+    prob = random.random()
+    if prob<MUTATION_PROB:
+        # print("Mutation occured")
+        i = random.randint(1,len(population)-1)
+        
+        j = random.randint(1,len(population)-1)
+        if i==0 or j==0:
+            print("NOOOOOOOOO")
+        while(i==j):
+            j = random.randint(0,len(population)-1)
+        population[i],population[j] = population[j],population[i]
+    return population 

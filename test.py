@@ -11,7 +11,7 @@ def uniquenessTests():
         parents.append(copy.deepcopy(pop))
         random.shuffle(pop)
         parents.append(copy.deepcopy(pop))
-        children = crossover(parents)
+        children = crossoverPairWise(parents)
         if len(set(children[0])) == len(children[0]):
             ct+=1
         if len(set(children[1])) == len(children[1]):
@@ -19,4 +19,6 @@ def uniquenessTests():
     if ct == 100 and ct1 == 100:
         print("Uniqueness test passed")
     else:
-        print("Uniqueness test failed")        
+        print("Uniqueness test failed")    
+
+uniquenessTests()    
