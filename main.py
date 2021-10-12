@@ -17,22 +17,27 @@ def main():
     # Print population with probabilities
     probs = fitness_function(population)
     maxx = max(probs)
-    for i in range(len(probs)):
-        if probs[i]==maxx:
+    # for i in range(len(probs)):
+    #     if probs[i]==maxx:
             # print(population[i])
-            plot_cities(population[i])
+            # plot_cities(population[i])
     # print(probs)
     # print(population)
     # print(select_parents(population,probs))
     # given fitness values, population 
     # select parents and produce new population until termination condition is met
-    for i in range(100):
-        children = generateChildPop(population,probs)
+    for i in range(200):
+        
+        children = generateChildPop(copy.deepcopy(population),probs,src)
+        # for p in children:
+        #     if p[0]!=src:
+        #         print("IN LOOP")
+        #         print(population)
         population = copy.deepcopy(children)
-        costList = list(map(fitness_function_calc,children))
+        costList = list(map(fitness_function_calc,copy.deepcopy(children)))
         minCost = min(costList)
         idx = costList.index(minCost)
-        print("epoch {0}, fitness - {1}, {2}".format(i,max(fitness_function(children)),minCost))
+        print("epoch {0}, fitness - {1}, {2}".format(i,max(fitness_function(copy.deepcopy(children))),minCost))
     print(population[idx])
 
 

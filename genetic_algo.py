@@ -4,28 +4,35 @@
 import random
 import copy
 
-INIT_POPULATION_SIZE = 20
+INIT_POPULATION_SIZE = 8
 MUTATION_PROB = 0.7
 
-def select_parents(population,fitness):
+def select_parents(population,fitness,src):
     parents = []
     fit = [1- w for w in fitness]
+    flag=0
+    
     for i in range(len(population)//2):
         parent_pair = random.choices(population,weights=fitness,k=2)
+        # if parent_pair[0][0]!=src or parent_pair[1][0]!=src:
+        #     print("HERE select parents")
+        #     print(parent_pair)
+        #     print("\n")
+        #     print(population)
+        #     # exit(0)
         while(parent_pair[0] == parent_pair[1]):
             parent_pair = random.choices(population,weights=fitness,k=2)
         parents.append(parent_pair)
-    
     return parents
 
-def crossoverPairWise(parents):
+def crossoverPairWise(parents,src):
     # trying to implement two point crossover with replacement (TPXwR)
     # research paper source - https://www.scitepress.org/papers/2015/55902/55902.pdf
     p1 = parents[0]
     p2 = parents[1]
     child1 = [None]*len(p1)
     child2 = [None]*len(p2)
-    low = random.randint(1,len(p1)//2)
+    low = random.randint(1,len(p1)-1)
     high = random.randint(low+1,len(p1))
     # low = 3
     # high = 7
@@ -91,6 +98,11 @@ def crossoverPairWise(parents):
                         child2[x] = j
                         break
                 break
+    # if child1[0]!=src or child2[0]!=src:
+    #     print("HERE crossover")
+    #     print(parents)
+    #     exit(0)
+            
     return [child1,child2]
 
 def fitness_function_calc(route):
@@ -129,19 +141,35 @@ def generate_random_population(size,city_list,src):
         route = generate_random_route(city_list)
         route.remove(src) 
         route.insert(0,src) # add the source city at the beginning
+        # if route[0]!=src:
+        #     print("HERE generate random population")
+        #     print(route)
+        #     exit(0)
         population.append(route)
     # print(population)
+    # for r in population:
+    #     if r[0]!=src:
+    #         print("IN RANDOM")
     return population
 
-def generateChildPop(parentPop,fitnessValues):
+def generateChildPop(parentPop,fitnessValues,src):
     childPop = []
-
+    flag=0
     for i in range(INIT_POPULATION_SIZE//2):
-        parents = select_parents(parentPop,fitnessValues)
-        children = crossoverPairWise(parents[i])
+        parents = select_parents(copy.deepcopy(parentPop),fitnessValues,src)
+        children = crossoverPairWise(copy.deepcopy(parents[i]),src)
+        # if children[0][0]!=src or children[1][0]!=src:
+        #     print("HERE generate child pop")
+        #     print(children)
+        #     exit(0)
         childrenMutated1 = mutate(copy.deepcopy(children[0]))
         childrenMutated2 = mutate(copy.deepcopy(children[1]))
         childPop.extend([childrenMutated1,childrenMutated2])
+    for p in childPop:
+        if p[0]!=src:
+            print("IN GENERATE CHILD POP\n")
+            flag=1
+            print(childPop)
     return childPop
 
 
@@ -155,9 +183,9 @@ def mutate(population):
         i = random.randint(1,len(population)-1)
         
         j = random.randint(1,len(population)-1)
-        if i==0 or j==0:
-            print("NOOOOOOOOO")
+        # if i==0 or j==0:
+        #     print("NOOOOOOOOO")
         while(i==j):
-            j = random.randint(0,len(population)-1)
+            j = random.randint(1,len(population)-1)
         population[i],population[j] = population[j],population[i]
     return population 
