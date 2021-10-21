@@ -1,9 +1,10 @@
 from genetic_algo import fitness_function_calc, generate_random_population,fitness_function, generateChildPop, select_parents,INIT_POPULATION_SIZE
 from input import getInputFromFile
 from models import City
-from plot import plot_cities
+from plot import plot_cities, plot_cost
 import copy
 
+EPOCHS = 2500
 
 def main():
     """
@@ -26,7 +27,8 @@ def main():
     # print(select_parents(population,probs))
     # given fitness values, population 
     # select parents and produce new population until termination condition is met
-    for i in range(200):
+    costs = []
+    for i in range(EPOCHS):
         
         children = generateChildPop(copy.deepcopy(population),probs,src)
         # for p in children:
@@ -37,8 +39,10 @@ def main():
         costList = list(map(fitness_function_calc,copy.deepcopy(children)))
         minCost = min(costList)
         idx = costList.index(minCost)
+        costs.append(minCost)
         print("epoch {0}, fitness - {1}, {2}".format(i,max(fitness_function(copy.deepcopy(children))),minCost))
     print(population[idx])
+    plot_cost([i for i in range(EPOCHS)],costs)
 
 
 if __name__=="__main__":

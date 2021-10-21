@@ -1,5 +1,5 @@
 from genetic_algo import *
-
+from models import *
 
 def uniquenessTests():
     pop = [1,2,3,4,5,6,7,8]
@@ -11,7 +11,7 @@ def uniquenessTests():
         parents.append(copy.deepcopy(pop))
         random.shuffle(pop)
         parents.append(copy.deepcopy(pop))
-        children = crossoverPairWise(parents)
+        children = simpleCrossover(parents,City('Delhi',0,0))
         if len(set(children[0])) == len(children[0]):
             ct+=1
         if len(set(children[1])) == len(children[1]):

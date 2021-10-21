@@ -16,3 +16,8 @@ def plot_cities(cities):
     for i, name in enumerate(names):
         plt.annotate(name, (X[i], Y[i]))
     plt.savefig('cities.png')
+
+def plot_cost(X,Y):
+    fig = plt.figure(figsize=(10, 10))
+    plt.plot(X,Y)
+    plt.savefig('cost.png')
