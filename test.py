@@ -11,7 +11,7 @@ def uniquenessTests():
         parents.append(copy.deepcopy(pop))
         random.shuffle(pop)
         parents.append(copy.deepcopy(pop))
-        children = simpleCrossover(parents,City('Delhi',0,0))
+        children = heuristicBasedCrossover(parents,City('Delhi',0,0))
         if len(set(children[0])) == len(children[0]):
             ct+=1
         if len(set(children[1])) == len(children[1]):

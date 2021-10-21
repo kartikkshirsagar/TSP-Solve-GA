@@ -10,6 +10,8 @@ class City:
         # print(self.__x ,other.getX())
         return self.name == other.name and self.__y == other.getY()
 
+    def __hash__(self):
+        return hash(self.name)
     def __str__(self):
         return "{0} located at {1},{2}".format(self.name,self.getX(),self.getY())
     def __repr__(self):

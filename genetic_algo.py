@@ -3,6 +3,7 @@
 # choose crossover function
 import random
 import copy
+import statistics
 
 INIT_POPULATION_SIZE = 20
 MUTATION_PROB = 0.7
@@ -21,12 +22,66 @@ def select_parents(population,fitness,src):
         #     print("\n")
         #     print(population)
         #     # exit(0)
-        while(parent_pair[0] == parent_pair[1]):
-            parent_pair = random.choices(population,weights=fitness,k=2)
+        # while(parent_pair[0] == parent_pair[1]):
+        #     parent_pair = random.choices(population,weights=fitness,k=2)
         parents.append(parent_pair)
     return parents
 
+def heuristicBasedCrossover(parents,src):
+    """
+        Get edges in each parent which have cost lesser than the median cost
+        and pass on those edges in respective children, 
+        then append other edges from the other parent
+    """
+    if random.random() < CROSSOVER_PROB:
+        p1= parents[0]
+        p2=parents[1]
+        total_cities = len(p1)
+        child1 = [None]*(len(p1))
+        child2 = [None]*(len(p2))
+        p1_edges = []
+        p2_edges = []
+        for i in range(len(p1)-1):
+            p1_edges.append((p1[i].distanceFrom(p1[i+1]),p1[i],p1[i+1],i))
+            p2_edges.append((p2[i].distanceFrom(p2[i+1]),p2[i],p2[i+1],i))
 
+        p1_edges.append((p1[-1].distanceFrom(p1[0]),p1[-1],p1[0],len(p1)-1))
+        p1_edges.sort(key=lambda x: x[0])
+        median1 = statistics.median([x[0] for x in p1_edges])
+        p2_edges.append((p2[-1].distanceFrom(p2[0]),p2[-1],p2[0],len(p2)-1))
+        p2_edges.sort(key=lambda x: x[0])
+        median2 = statistics.median([x[0] for x in p1_edges])
+        # now pass on the "good" edges to the children
+        child1_set = set()
+        child2_set = set()
+        for x in p1_edges:
+            if x[0]<median1:
+                child1[x[3]] = x[1]
+                child1[(x[3]+1)%len(p1)] = x[2]
+                child1_set.add(x[1])
+                child1_set.add(x[2])
+        for x in p2_edges:
+            if x[0]<median2:
+                child2[x[3]] = x[1]
+                child2[(x[3]+1)%len(p1)] = x[2]
+                child2_set.add(x[1])
+                child2_set.add(x[2])
+        # now append the rest of the edges from the other parent
+        for x in p1:
+            if x not in child2_set:
+                for i in range(len(child2)):
+                    if child2[i]==None:
+                        child2[i] = x
+                        break
+        for x in p2:
+            if x not in child1_set:
+                for i in range(len(child1)):
+                    if child1[i]==None:
+                        child1[i] = x
+                        break
+        return [child1,child2]
+    else:
+        return parents
 def simpleCrossover(parents,src):
     if random.random() < CROSSOVER_PROB:
         p1= parents[0]
@@ -196,7 +251,7 @@ def getTopQuarter(parentPop,fitnessValues):
     elites = []
     for i in range(len(parentPop)):
         elites.append((fitnessValues[i],parentPop[i]))
-    elites.sort()
+    elites.sort(reverse=True)
     elites = elites[:len(elites)//4]
     individuals= [list(t) for t in zip(*elites)] # [(x,y),(a,b)] => [x,a] and [y,b]
     return individuals
@@ -205,9 +260,10 @@ def generateChildPop(parentPop,fitnessValues,src):
     childPop = []
     flag=0
     elitePopulation = getTopQuarter(parentPop,fitnessValues)
+    # elitePopulation = [fitnessValues,parentPop]
     for i in range(INIT_POPULATION_SIZE//2):
         parents = select_parents(copy.deepcopy(elitePopulation[1]),elitePopulation[0],src)
-        children = crossoverPairWise(copy.deepcopy(parents[i]),src)
+        children = heuristicBasedCrossover(copy.deepcopy(parents[i]),src)
         # children = simpleCrossover(copy.deepcopy(parents[i]),src)
         # if children[0][0]!=src or children[1][0]!=src:
         #     print("HERE generate child pop")
@@ -239,3 +295,11 @@ def mutate(route):
             route[b],route[a+1] = route[a+1],route[b]
             # print("mutated")
     return route 
+
+
+def checkConvergence(costs):
+    std_dev = statistics.stdev(costs)
+    if std_dev < 0.01:
+        return True
+    else:
+        return False
