@@ -1,11 +1,11 @@
 from genetic_algo import checkConvergence, fitness_function_calc, generate_random_population,fitness_function, generateChildPop, select_parents,INIT_POPULATION_SIZE
 from input import getInputFromFile
 from models import City
-from plot import plot_cities, plot_cost
+from plot import plot_cities, plot_cost, plot_route
 import copy
 
-EPOCHS = 500
-
+EPOCHS = 5000
+CONVERGENCE_VALUE = 20
 def main():
     """
     Main function
@@ -28,14 +28,15 @@ def main():
     # given fitness values, population 
     # select parents and produce new population until termination condition is met
     costs = []
-    last_10_costs = [None]*10
+    last_costs = [None]*CONVERGENCE_VALUE
     k = 0
     for i in range(EPOCHS):
-        if i > 10:
-            if checkConvergence(last_10_costs):
+        if i > CONVERGENCE_VALUE:
+            if checkConvergence(last_costs):
                 print(population[idx])
                 # print(population)
                 plot_cost([j for j in range(k)],costs)
+                plot_route(population[idx])
                 # print(k)
                 # print(costs)
                 break
@@ -50,12 +51,12 @@ def main():
         idx = costList.index(minCost)
         costs.append(minCost)
         print("epoch {0}, fitness - {1}, {2}".format(i,max(fitness_function(copy.deepcopy(children))),minCost))
-        last_10_costs[i%10] = minCost
+        last_costs[i%CONVERGENCE_VALUE] = minCost
         k+=1
     # print(population[idx])
     # print(population)
-    # plot_cost([i for i in range(EPOCHS)],costs)
-
+    plot_cost([i for i in range(k)],costs)
+    plot_route(population[idx])
 
     
 if __name__=="__main__":

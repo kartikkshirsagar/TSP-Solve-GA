@@ -1,7 +1,8 @@
 from models import City
+from plot import plot_cities
 def getInputFromFile():
     cities = []
-    with open("input1.txt","r") as f:
+    with open("input.txt","r") as f:
         lines = f.readlines()
         for line in lines:
             try:
@@ -10,7 +11,7 @@ def getInputFromFile():
                 cities.append(city)
             except:
                 print("Error in line: ",line)
-           
+    plot_cities(cities)       
     # for x in cities:
     #     print(x)
     return cities
