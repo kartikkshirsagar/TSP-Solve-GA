@@ -15,27 +15,36 @@ Buenos Aires,-34.5997,-58.3819
 Dhaka,23.7289,90.3944
 Lagos,6.45,3.4
 Istanbul,41.01,28.9603
-Karachi,24.86,67.01
 Bangalore,12.9699,77.598
 Tehran,35.7,51.4167
 Ho Chi Minh City,10.8167,106.6333
 Los Angeles,34.1139,-118.4068
 Rio de Janeiro,-22.9083,-43.1964
-Lahore,31.5497,74.3436
 Paris,48.8566,2.3522
 London,51.5072,-0.1275
 Lima,-12.05,-77.0333
-Hyderabad,17.3667,78.4667
-Handan,36.6116,114.4894
 Bogota,4.6126,-74.0705
 Wuhan,30.5872,114.2881
 Chicago,41.8373,-87.6862
 Kuala Lumpur,3.1478,101.6953
 Hanoi,21.0245,105.8412
-Ahmedabad,23.03,72.58
 Madrid,40.4167,-3.7167
 Dallas,32.7936,-96.7662
 Nairobi,-1.2864,36.8172
 Saint Petersburg,59.95,30.3167
 Melbourne,-37.8136,144.9631
 Cape Town,-33.925,18.425
+Kigali,-1.9536,30.0606
+Lisbon,38.7452,-9.1604
+Auckland,-36.85,174.7833
+Sharjah,25.3575,55.3919
+Santiago,-33.45,-70.6667
+Oslo,59.9111,10.7528
+Toronto,43.7417,-79.3733
+Rabat,34.0253,-6.8361
+Yakutsk,62.0272,129.7319
+Port of Spain,10.6667,-61.5167
+Stanley,-51.7,-57.85
+Yamoussoukro,6.8161,-5.2742
+Harare,-17.8292,31.0522
+Nuuk,64.175,-51.7333

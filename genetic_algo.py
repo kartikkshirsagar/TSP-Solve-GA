@@ -5,8 +5,8 @@ import random
 import copy
 import statistics
 
-INIT_POPULATION_SIZE = 20
-MUTATION_PROB = 0.7
+INIT_POPULATION_SIZE = 8
+MUTATION_PROB = 0.8
 CROSSOVER_PROB = 0.5
 
 def select_parents(population,fitness,src):
@@ -22,8 +22,11 @@ def select_parents(population,fitness,src):
         #     print("\n")
         #     print(population)
         #     # exit(0)
-        # while(parent_pair[0] == parent_pair[1]):
-        #     parent_pair = random.choices(population,weights=fitness,k=2)
+        # if(parent_pair[0] == parent_pair[1]):
+        #     # parent_pair[1] = random.choices(population,weights=fitness,k=1)[0]
+        #     i = random.randint(0,len(parent_pair[0])-1)
+        #     j = random.randint(0,len(parent_pair[0])-1)
+        #     parent_pair[1][i],parent_pair[1][j] = parent_pair[1][j],parent_pair[1][i]
         parents.append(parent_pair)
     return parents
 
@@ -191,10 +194,6 @@ def crossoverPairWise(parents,src):
                             child2[x] = j
                             break
                     break
-        # if child1[0]!=src or child2[0]!=src:
-        #     print("HERE crossover")
-        #     print(parents)
-        #     exit(0)
                 
         return [child1,child2]
     else:
@@ -220,7 +219,6 @@ def fitness_function(population):
 
     # scale it between 0 to 1
     sum_weights = sum(fitness_values)
-    # print(weights)
     fitness_values_scaled = [(w / sum_weights) for w in fitness_values]  # Normalize weights
     return fitness_values_scaled
     
@@ -234,17 +232,7 @@ def generate_random_population(size,city_list,src):
     population = []
     for i in range(size):
         route = generate_random_route(city_list)
-        route.remove(src) 
-        route.insert(0,src) # add the source city at the beginning
-        # if route[0]!=src:
-        #     print("HERE generate random population")
-        #     print(route)
-        #     exit(0)
         population.append(route)
-    # print(population)
-    # for r in population:
-    #     if r[0]!=src:
-    #         print("IN RANDOM")
     return population
 
 def getTopQuarter(parentPop,fitnessValues):
@@ -259,47 +247,33 @@ def getTopQuarter(parentPop,fitnessValues):
 def generateChildPop(parentPop,fitnessValues,src):
     childPop = []
     flag=0
-    elitePopulation = getTopQuarter(parentPop,fitnessValues)
+    elitePopulation = getTopQuarter(parentPop,fitnessValues) # get top quarter of the population
     # elitePopulation = [fitnessValues,parentPop]
     for i in range(INIT_POPULATION_SIZE//2):
         parents = select_parents(copy.deepcopy(elitePopulation[1]),elitePopulation[0],src)
         children = heuristicBasedCrossover(copy.deepcopy(parents[i]),src)
-        # children = simpleCrossover(copy.deepcopy(parents[i]),src)
-        # if children[0][0]!=src or children[1][0]!=src:
-        #     print("HERE generate child pop")
-        #     print(children)
-        #     exit(0)
         childrenMutated1 = mutate(copy.deepcopy(children[0]))
         childrenMutated2 = mutate(copy.deepcopy(children[1]))
         childPop.extend([childrenMutated1,childrenMutated2])
-    # for p in childPop:
-    #     if p[0]!=src:
-    #         print("IN GENERATE CHILD POP\n")
-    #         flag=1
-    #         print(childPop)
     return childPop
 
 
 
 
 def mutate(route):
-
     prob = random.random()
     if prob<MUTATION_PROB:
         # print("Mutation occured")
         nums = random.sample(range(0,len(route)-1),2)
         a,b = nums
         if route[a].distanceFrom(route[a+1]) + route[b].distanceFrom(route[b+1]) >  route[a].distanceFrom(route[b]) + route[a+1].distanceFrom(route[b+1]):
-            # if i==0 or j==0:
-            #     print("NOOOOOOOOO")
             route[b],route[a+1] = route[a+1],route[b]
-            # print("mutated")
     return route 
 
 
 def checkConvergence(costs):
     std_dev = statistics.stdev(costs)
-    if std_dev < 0.01:
+    if std_dev < 1:
         return True
     else:
         return False
