@@ -17,7 +17,7 @@ This also uses some domain heuristic to mutate any individual.
 3) Now if dist(A,B) + dist(C,D) > dist(A,C) + dist(B,D) then swap B with C.
 4) I do this only once i.e. on only one set of (i,j) which is generated randomly.
 
-##Selection : 
+## Selection : 
 Every population is divided into two halves : Elites and non-Elites. Elites are the ones having better fitness values, and then only the elites are considered for the mating pool.
 
 ## Fitness function : 
